@@ -12,10 +12,13 @@ import GlobalHeader from '../components/GlobalHeader';
 import GlobalFooter from '../components/GlobalFooter';
 import SiderMenu from '../components/SiderMenu';
 import NotFound from '../routes/Exception/404';
-import { getRoutes } from '../utils/utils';
+import { getRoutes,checkWindowWidth,debounce } from '../utils/utils';
 import Authorized from '../utils/Authorized';
 import { getMenuData } from '../common/menu';
 import logo from '../assets/logo.png';
+
+import Debounce from 'lodash-decorators/debounce';
+import Bind from 'lodash-decorators/bind';
 
 const { Content, Header, Footer,Sider } = Layout;
 const { AuthorizedRoute, check } = Authorized;
@@ -84,11 +87,15 @@ enquireScreen(b => {
   isMobile = b;
 });
 
+@connect(({ global }) => ({
+  global
+}))
 class BasicLayout extends React.PureComponent {
   static childContextTypes = {
     location: PropTypes.object,
     breadcrumbNameMap: PropTypes.object,
   };
+  
   state = {
     isMobile,
     collapsed:false,
@@ -109,10 +116,24 @@ class BasicLayout extends React.PureComponent {
     this.props.dispatch({
       type: 'user/fetchCurrent',
     });
+    //测试是否成功绑定resize
+    window.addEventListener('resize',this.changeCharts); 
   }
+
+
   componentWillUnmount() {
     unenquireScreen(this.enquireHandler);
   }
+
+  @Bind()
+  @Debounce(500)
+  changeCharts() {
+    this.props.dispatch({
+      type:'global/windowWidthChange',
+      payload:window.innerWidth
+    })
+  }
+
   getPageTitle() {
     const { routerData, location } = this.props;
     const { pathname } = location;

@@ -162,22 +162,22 @@ export function isUrl(path) {
   return reg.test(path);
 }
 
-export const debounce = function(fn,delay){
-  let timer;
-  return function(){
-    let context;
-    let args = arguments;
-    clearTimeout(timer);
-    timer = setTimeout(function(){
-      fn.apply(context,args)
-    },delay)
-  }
-}
+// export const debounce = function(fn,delay){
+//   let timer;
+//   return function(){
+//     let context;
+//     let args = arguments;
+//     clearTimeout(timer);
+//     timer = setTimeout(function(){
+//       fn.apply(context,args)
+//     },delay)
+//   }
+// }
 
 export function checkWindowWidth(){
-  debounce(store.dispatch({
-    type:'windowWidthChange',
+  store.dispatch({
+    type:'global/windowWidthChange',
     payload:window.innerWidth
-  }),500);
+  })
 }
-window.addEventListener('resize',checkWindowWidth);
+

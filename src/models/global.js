@@ -12,6 +12,12 @@ export default {
   effects: {
     *fetchNotices(_, { call, put }) {
       const data = yield call(queryNotices);
+      //测试select 
+      const selectData = yield select(state => {
+        console.log('all state',state);
+        return window.innerWidth
+      });
+      //end
       yield put({
         type: 'saveNotices',
         payload: data,
@@ -32,11 +38,29 @@ export default {
         payload: count,
       });
     },
+    *windowWidthChange({payload}, {put, select }){
+      const selectData = yield select(state => {
+        console.log('all state',state);
+        return window.pageXOffset
+      });
+      console.log(selectData);
+      yield put({
+        type:'updateWindowWidth',
+        payload:payload
+      })
+    }
   },
 
   reducers: {
-    windowWidthChange(state,{payload}){
-      console.log('reducer global windowChange',payload);
+    // windowWidthChange(state,{payload}){
+    //   console.log('reducer global windowChange',payload);
+    //   return {
+    //     ...state,
+    //     windowWidth:payload
+    //   }
+    // },
+    updateWindowWidth(state,{payload}){
+      // console.log('reducer global windowChange',payload);
       return {
         ...state,
         windowWidth:payload
@@ -72,7 +96,8 @@ export default {
       });
     },
 
-    windowWidthChange(){
+    windowWidthChange({dispatch,history}){
+      //在此处监听浏览器document.clientWidth,如果变化了，则更改widthChange属性为true，传至组件，调用resize
       let winWidth = 0;
       if(document.compatMode == "css1Compat"){
         winWidth = document.documentElement.clientWidth;

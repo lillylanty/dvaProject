@@ -267,6 +267,9 @@ let timer;
   loading: loading.effects['chart/fetch'],
 }))
 export default class Information extends Component {
+  constructor(props){
+    super(props);
+  }
   state = {
     salesType: 'all',
     currentTabKey: '',
@@ -275,10 +278,6 @@ export default class Information extends Component {
   componentDidMount() {
     this.props.dispatch({
       type: 'chart/fetch',
-    });    
-    this.props.dispatch({
-      type:'windowWidthChange',
-      payload:window.innerWidth
     });
     echartsDom.push(
       document.getElementById('person'),
@@ -294,10 +293,6 @@ export default class Information extends Component {
         _a.resize();
       })
     })
-    // this.paintChart2(echartsDom[0],options1);
-    // setTimeout(()=>{this.paintChart2(echartsDom[1],options2)},1000);
-    // setTimeout(()=>{this.paintChart2(echartsDom[2],options3)},2000);
-    // setTimeout(()=>{this.paintChart2(echartsDom[3],options4)},3000);
   }
 
 
@@ -313,24 +308,18 @@ export default class Information extends Component {
   paintChart2 = (domNode,opt)=>{
     let _a = echarts.init(domNode,'light');
     _a.setOption(opt);
-    window.addEventListener('resize',()=>{
-      _a.resize();
-    })
+    // window.addEventListener('resize',()=>{
+    //   _a.resize();
+    // })
   }
 
-
-  shouldComponentUpdate(nextProps){
-    // console.log('receiveProps',nextProps.windowWidth , window.innerWidth);
-    // let oldwindowWidth = '';
-    // timer = setInterval(()=>{
-    //   oldwindowWidth = window.innerWidth;
-    // },100)
-    // if(window.innerWidth !== oldwindowWidth){
-    //   this.resizeCharts();
-    //   return true
-    // }
-    return true
+  componentWillReceiveProps(nextProps){
+    console.log('receiveProps',nextProps.global.windowWidth , this.props.global.windowWidth);
+    if(nextProps.windowWidth !== this.props.windowWidth){
+      this.resizeCharts();
+    }
   }
+
 
   componentWillUnmount() {
     const { dispatch } = this.props;
